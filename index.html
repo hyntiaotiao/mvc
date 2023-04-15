@@ -1,0 +1,439 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>MVC架构在线演示工具</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="assets/libs/jquery.min.js"></script>
+    <script src="assets/libs/ace/ace.js"></script>
+    <script src="assets/libs/ext-language_tools.js"></script>
+    <script src="assets/js/toast.script.js"></script>
+    <script src="assets/js/FileSaver.min.js" /></script>
+    <script src="assets/libs/clipboard.min.js" /></script>
+    <script src='assets/js/woeorv.js'></script>
+    <link href="assets/css/toast.style.css" rel="stylesheet">
+    <style>
+    * {
+        padding: 0px;
+        margin: 0px
+    }
+
+    html,
+    body {
+        height: 100%;
+    }
+
+    body {
+        background-color: #212121
+    }
+
+    iframe {
+        border-width: 0px;
+        width: 100%;
+        height: 100%
+    }
+
+    textarea {
+        width: 100%;
+        height: 100%
+    }
+
+    #editor {
+        width: 100%;
+        height: 100%
+    }
+
+    #editor2 {
+        width: 100%;
+        height: 100%
+    }
+
+    .fzdm {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        z-index: 99;
+        font-size: 12px;
+    }
+
+    .fzdm li {
+        list-style-image: none;
+        list-style-type: none;
+        float: right;
+        margin-left: 1px;
+        background-color: rgba(39, 39, 39, 1.00);
+        padding: 5px 10px 5px 10px;
+        color: rgba(255, 255, 255, 1.00);
+        cursor: pointer
+    }
+
+    .fzdm li:hover {
+        background-color: rgba(32, 103, 229, 1.00);
+    }
+
+        body {
+      margin: 0;
+      padding: 0;
+    }
+    .wrapper {
+      display: flex;
+      height: 100vh;
+    }
+    .left {
+      flex: 1;
+      background-color: #ccc;
+      overflow-y: scroll;
+      height: 100vh;
+      width: 50%;
+    }
+    .right {
+      flex: 1;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 50%;
+      overflow: hidden;
+    }
+    .top {
+      background-color: #f0f0f0;
+      height: 50vh;
+    }
+    .bottom {
+      background-color: #ddd;
+      height: 50vh;
+    }
+    .box{
+        text-align: center;
+        width: 50%;
+    }
+    .box img{
+        width: 60%;
+        display: inline-block;
+        margin:20px auto;
+    }
+    .box h1{
+        margin: auto;
+    }
+    .box p{
+        text-align: left;
+        margin: 0 2%;
+    }
+    </style>
+</head>
+
+<body>
+  <div class="wrapper">
+    <div class="left">
+        <div id="content">
+            <div class="box">
+                <img src="./assets/image/mvc.jpg" alt="MVC Pattern">
+                <h1 style="margin-bottom: 20px;">MVC Pattern</h1>
+                <p>
+                    <span style="font-weight: bold;">模型层：</span>
+                    负责处理数据和逻辑，即负责管理应用程序中的数据。它代表应用程序的数据和业务逻辑。模型层通常由数据库和其它数据存储技术组成。
+                </p>
+                <p>
+                    <span style="font-weight: bold;">视图层：</span>
+                    负责展示数据和图形界面。视图层通过用户与应用程序的交互，将用户的请求转换为控制器的事件处理请求，将控制器的处理结果展示给用户。
+                </p>
+                <p>
+                    <span style="font-weight: bold;">控制器层：</span>
+                    负责协调模型层与视图层，即处理用户请求并更新模型层的数据状态，同时更新视图层的界面。控制器层包含用户界面的主要控制逻辑，它接收用户请求并进行处理，或更新模型层的状态，或指导视图层展示用户数据。
+                </p>
+                <h1>
+                    MVC的优势
+                </h1>
+                <p>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MVC 将应用程序分为三个部分，每个部分有不同的职责，有助于将应用程序的不同部分分离开来，简化代码结构，使得代码更容易维护和开发。例如，当你需要修改界面时，你只需要修改视图部分而不影响模型和控制器的代码。
+                </p>
+                <br/>
+                <p>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下面我们将模拟一个实际的开发场景，运用MVC架构完成各种需求。右边的上半部分是已经根据用户需求写好的一部分代码，点击运行后将在下半部分展示运行效果。你可以根据你的想法随意修改代码。以下是详细说明。
+                </p>
+                <h1>
+                    需求
+                </h1>
+                <p>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;用户需要开发一款软件，这款软件可以收集鼠标点击位置的坐标，并绘制某些特定的数学图形（如：凸包、最小生成树等）。具体要求如下：<br/>
+                    1、当鼠标点击绘图区域时，应在对应的点击位置绘制圆点<br/>
+                    2、用户可以选择生成这些点的一个凸包，并在绘图区域展示<br/>
+                    3、用户可以选择生成这些点的一个最小生成树，并在绘图区域展示<br/>
+                    4、用户想在绘图区域同时展示凸包和最小生成树<br/>
+                    5、也许用户以后还想生成别的图形，但暂时还不确定<br/>
+                    6、也许用户以后觉得界面不够好看，想把绘图区域一分为四，分别展示不同的图形<br/>
+                </p>
+                <br/>
+                <p>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;右边的示例代码已经完成了需求1和2，并采用MVC架构。你需要关注的是Model、View、Controller三个类，它们分别负责数据存储、图形展示、控制逻辑。你可以从中初步感受MVC架构分工明确、代码结构清晰的特点（阅读这份代码并不需要你具备很多的前端知识，关键部分都有详细的注释，你只需要关注它们的逻辑关系）。
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="right">
+        <!-- 编辑区 -->
+        <div class="top">
+            <div class="fzdm">
+                <li class="yunxing">运行</li>
+            </div>
+            <pre id="editor">
+<!--編輯器中默認顯示的代碼開始-->
+&lt;body&gt;
+    &lt;div&gt;
+        &lt;!-- 按钮区域 --&gt;
+    &lt;/div&gt;
+    &lt;canvas id=&quot;canvas&quot; height=&quot;300px&quot; width=&quot;600px&quot; style=&quot;background-color: white; border: 1px solid black;&quot;&gt;&lt;/canvas&gt;
+    &lt;script&gt;
+        (function() {
+        //持久层
+        class Model {
+            constructor() {
+                //存储所有用户点击的点
+                this.points = [];
+                //存储所需图像的所有点集，顺次连接集合中的点即可得到相应的图
+                this.graphics = new Map();
+                //在视图中添加按钮
+                var button = document.createElement(&#x27;button&#x27;);
+                button.innerHTML = &#x27;生成凸包&#x27;;
+                button.setAttribute(&#x27;id&#x27;, &#x27;generate-convex_hull&#x27;);
+                var button1 = document.createElement(&#x27;button&#x27;);
+                button1.innerHTML = &#x27;清空&#x27;;
+                button1.setAttribute(&#x27;id&#x27;,&#x27;clear&#x27;);
+                var divElements = document.getElementsByTagName(&#x27;div&#x27;);  // 获取所有的 div 元素
+                divElements[0].appendChild(button1);  // 添加按钮到第一个 div 元素中
+                divElements[0].appendChild(button)
+            }
+            //添加一个点
+            addPoint(point) {
+                this.points.push(point);
+            }
+            //移除一个点
+            removeLastPoint() {
+                this.points.pop();
+            }
+            //清空点
+            clearPoints() {
+                this.points = [];
+            }
+            //获取点数组
+            getPoints() {
+                return this.points;
+            }
+        }
+        //视图层
+        class View {
+            //构造函数
+            constructor() {
+                this.canvas = document.getElementById(&#x27;canvas&#x27;);
+                this.ctx = this.canvas.getContext(&#x27;2d&#x27;);
+            }
+            //清空画布
+            clear() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            }
+            //绘制凸包
+            drawConvexHull(points) {
+                var start = points[0];
+                this.ctx.beginPath();
+                this.ctx.moveTo(start[0], start[1]);
+                for(var i = 1; i &lt; points.length; i++) {
+                    var point = points[i];
+                    this.ctx.lineTo(point[0], point[1]);
+                }
+                this.ctx.lineTo(start[0], start[1]);
+                this.ctx.stroke()
+            }
+            //添加事件
+            addClickHandler(handler) {
+                this.canvas.addEventListener(&#x27;click&#x27;, handler);
+            }
+            //移除事件
+            removeClickHandler(handler) {
+                this.canvas.removeEventListener(&#x27;click&#x27;, handler);
+            }
+            //绘制该点
+            drawPoint(point) {
+                this.ctx.fillStyle = &#x27;red&#x27;;
+                this.ctx.beginPath();
+                this.ctx.arc(point[0], point[1], 2, 0, 2 * Math.PI);
+                this.ctx.fill();
+            }
+        }
+    //持久层
+    class Controller {
+        constructor(model, view) {
+            this.model = model;
+            this.view = view;
+            //给view添加事件
+            this.view.addClickHandler(this.handleCanvasClick.bind(this));
+            //对应按钮添加事件
+            document.getElementById(&#x27;generate-convex_hull&#x27;).addEventListener(&#x27;click&#x27;, this.handleGenerateConvexHull.bind(this));
+            document.getElementById(&#x27;clear&#x27;).addEventListener(&#x27;click&#x27;, this.handleClearPoints.bind(this));
+        }
+        //鼠标点击事件
+        handleCanvasClick(e) {
+            let x = e.offsetX;
+            let y = e.offsetY;
+            //向Model中添加点，在View中绘制点
+            this.model.addPoint([x, y]);
+            this.view.drawPoint([x, y]);
+        }
+        //清空
+        handleClearPoints() {
+            this.model.clearPoints();
+            this.view.clear();
+        }
+        //生成凸包
+        handleGenerateConvexHull() {
+            let points = this.model.getPoints();
+            //生成凸包的点集，并存储到Model中
+            this.model.graphics.set(&quot;convex_hull&quot;,this.getConvexHull(points));
+            //根据Model中的点集，绘制相应图像
+            this.view.drawConvexHull(this.model.graphics.get(&quot;convex_hull&quot;));//绘制凸包
+        }
+        //生成凸包
+        getConvexHull(points) {
+          if (points.length &lt; 3) {
+            return points;
+          }
+          // 找到 y 坐标最小的点作为极点
+          const minY = Math.min(...points.map(p =&gt; p[1]));
+          let pole = points.find(p =&gt; p[1] === minY);
+          // 根据极角排序
+          points = points.filter(p =&gt; p !== pole).sort((a, b) =&gt; {
+            const angleA = Math.atan2(a[1] - pole[1], a[0] - pole[0]);
+            const angleB = Math.atan2(b[1] - pole[1], b[0] - pole[0]);
+            return angleA - angleB;
+          });
+          const stack = [pole, points[0], points[1]];
+          for (let i = 2; i &lt; points.length; i++) {
+            let top = stack[stack.length - 1];
+            let nextToTop = stack[stack.length - 2];
+            while (stack.length &gt; 1 &amp;&amp; this.crossProduct(nextToTop, top, points[i]) &lt; 0) {
+              stack.pop();
+              top = stack[stack.length - 1];
+              nextToTop = stack[stack.length - 2];
+            }
+            stack.push(points[i]);
+          }
+          return stack;
+        }
+        // 计算叉积(被getConvexHull(points)调用)
+        crossProduct(p1, p2, p3) {
+          return (p2[0] - p1[0]) * (p3[1] - p1[1]) - (p3[0] - p1[0]) * (p2[1] - p1[1]);
+        }
+
+    }
+    let model = new Model();
+    let view = new View();
+    let controller = new Controller(model, view);
+        })()
+&lt;/script&gt;
+&lt;/body&gt;
+<!-- 編輯器中默認顯示的代碼結束 -->
+            </pre>
+        </div>
+        <!-- 展示区 -->
+        <div class="bottom">
+            <iframe id="iframe"></iframe>
+        </div>
+    </div>
+  </div>
+    <script>
+    var editor = ace.edit("editor");
+    editor.session.setMode("ace/mode/html");
+    editor.setTheme("ace/theme/twilight");
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true
+    });
+
+
+    function Run() {
+        var o = document.getElementById("iframe");
+        ed = document.all ? o.contentWindow.document : o.contentDocument;
+        ed.open();
+        ed.write('<html><head></head><body>' + editor.getValue() + '</body></html>');
+        ed.close();
+        ed.contentEditable = true;
+        ed.designMode = 'on';
+    }
+    Run();
+    $('.yunxing').click(function() {
+        Run();
+    })
+
+
+    var clipboard = new Clipboard('.fuzhi');
+    clipboard.on('success', function(e) {});
+
+    clipboard.on('error', function(e) {});
+    </script>
+    <script>
+    </script>
+    <style>
+    .ace-twilight .ace_comment {
+        font-style: inherit
+    }
+
+    .ace_editor {
+        font: 14px/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+    }
+
+    .ace-twilight .ace_meta.ace_tag,
+    .ace-twilight .ace_variable {
+        color: #1ea2b9;
+    }
+
+    .ace_folding-enabled>.ace_gutter-cell {
+        color: #666;
+    }
+
+    .ace_editor.ace_autocomplete .ace_completion-highlight {
+        color: #00b317;
+        font-weight: 600;
+        text-shadow: 0 0 0;
+    }
+
+    .ace_editor.ace_autocomplete .ace_marker-layer .ace_active-line {
+        background-color: #235f36;
+    }
+
+    .ace_editor.ace_autocomplete {
+        border-radius: 3px;
+        background: #333333;
+        border: 1px #040404 solid;
+        color: #c1c1c1;
+    }
+
+    .webul {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .webul a {
+        color: #2f2e2e;
+        transition: all .5s ease 0s;
+    }
+
+    .webul a:hover {
+        color: #2b93e6;
+        text-decoration: none;
+        padding-left: 10px;
+    }
+
+    .dong {
+        transition: all 1s ease 0s;
+    }
+
+    .pl {
+        font-weight: 400;
+    }
+    </style>
+</body>
+</html>
